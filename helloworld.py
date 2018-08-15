@@ -4,9 +4,6 @@ import numpy as np
 
 # DP
 
-arr = [1, 2, 4, 1, 7, 8, 3]
-# arr = [4, 1, 1, 9, 10]
-
 # overlap sub-problems
 def rec_opt(arr, i):
     if i == 0:
@@ -120,6 +117,27 @@ def dp_complete_knapsack(warr, varr, W):
     x, y = opt_arr.shape
     return opt_arr[x-1, y-1]
 
+
+# 
+def rec_minimal_coin(varr, i, S):
+    
+    if i < 0 or S < 0:
+        raise Exception("Invalid parameters")
+
+    if S == 0:
+        return 0
+    if S == varr[i]:
+        return 1
+    if i == 0:
+        return S
+    if S < varr[i]:
+        return rec_minimal_coin(varr, i-1, S)
+
+    return min(
+        rec_minimal_coin(varr, i, S-varr[i]) + 1,
+        rec_minimal_coin(varr, i-1, S)
+    )
+
 if __name__ == "__main__":
 
     values = [6,3,5,4,6]
@@ -136,7 +154,13 @@ if __name__ == "__main__":
         
         print("w: %d: rec: %d | dp: %d"%(t_w, value1, value2))
 
-
+    coins = [1, 2, 5, 10]
+    try:
+        for money in range(1, 20):
+            count = rec_minimal_coin(coins, len(coins)-1, money)
+            print("for money: %d|least coin: %d" % (money, count))
+    except:
+        print("opps")
 
 
 
