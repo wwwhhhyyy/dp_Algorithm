@@ -138,6 +138,26 @@ def rec_minimal_coin(varr, i, S):
         rec_minimal_coin(varr, i-1, S)
     )
 
+def dp_minimal_coin(varr, S):
+    opt_arr = np.zeros((len(varr), S+1), dtype=np.int32)
+    opt_arr[:, 0] = 0
+    opt_arr[0, :] = [x for x in range(S+1)]
+
+    # should be very careful! idx and varr[idx]    
+    for idx in range(1, len(varr)):
+        for s in range(1, S+1):
+            if varr[idx] == s:
+                opt_arr[idx, s] = 1
+            elif s <= varr[idx]:
+                opt_arr[idx, s] = opt_arr[idx-1, s]
+            else:
+                opt_arr[idx, s] = min(
+                    opt_arr[idx, s-varr[idx]] + 1,
+                    opt_arr[idx-1, s]
+                )
+    x, y = opt_arr.shape
+    return opt_arr[x-1, y-1]
+
 if __name__ == "__main__":
 
     values = [6,3,5,4,6]
@@ -155,10 +175,12 @@ if __name__ == "__main__":
         print("w: %d: rec: %d | dp: %d"%(t_w, value1, value2))
 
     coins = [1, 2, 5, 10]
+    count2 = dp_minimal_coin(coins, 5)
     try:
         for money in range(1, 20):
-            count = rec_minimal_coin(coins, len(coins)-1, money)
-            print("for money: %d|least coin: %d" % (money, count))
+            count1 = rec_minimal_coin(coins, len(coins)-1, money)
+            count2 = dp_minimal_coin(coins, money)
+            print("for money: %d|least coin: [rec:%d] [dp:%d]" % (money, count1, count2))
     except:
         print("opps")
 
